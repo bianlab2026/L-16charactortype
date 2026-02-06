@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="ja" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lキャラタイプ診断</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&amp;family=Cormorant+Garamond:wght@400;600&amp;display=swap" rel="stylesheet">
+  
+	 
+	 
+	 
+	 <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Zen Maru Gothic', sans-serif;
+    }
+    
+    .title-font {
+      font-family: 'Cormorant Garamond', serif;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+    
+    @keyframes float-reverse {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(-5deg); }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    
+    .floating-element {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .floating-element-reverse {
+      animation: float-reverse 5s ease-in-out infinite;
+    }
+    
+    .floating-element-slow {
+      animation: float 8s ease-in-out infinite;
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    
+    .shimmer-text {
+      background: linear-gradient(90deg, var(--primary-color) 0%, #fff 50%, var(--primary-color) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s linear infinite;
+    }
+    
+    .heart-button {
+      position: relative;
+      width: 60px;
+      height: 54px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .heart-button:hover {
+      transform: scale(1.15);
+    }
+    
+    .heart-button.selected {
+      transform: scale(1.2);
+    }
+    
+    .heart-shape {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .progress-bar {
+      background: linear-gradient(90deg, #ff6b9d, #c084fc, #ff6b9d);
+      background-size: 200% 100%;
+      animation: shimmer 2s linear infinite;
+    }
+    
+    .card-glow {
+      box-shadow: 0 0 40px rgba(255, 107, 157, 0.3), 0 0 80px rgba(192, 132, 252, 0.2);
+    }
+    
+    .result-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,240,245,0.95) 100%);
+      backdrop-filter: blur(10px);
+    }
+    
+    .type-badge {
+      background: linear-gradient(135deg, #ff6b9d 0%, #c084fc 100%);
+    }
+    
+    .share-button {
+      transition: all 0.3s ease;
+    }
+    
+    .share-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    
+    .compatibility-card {
+      transition: all 0.3s ease;
+    }
+    
+    .compatibility-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .screen {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    
+    .screen.active {
+      display: flex;
+      opacity: 1;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app-container" class="min-h-full w-full relative overflow-hidden" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);"><!-- Floating Background Elements -->
+   <div id="floating-bg" class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="floating-element absolute top-10 left-10 w-20 h-20 opacity-30">
+     <svg viewbox="0 0 100 100" fill="none"><path d="M50 90C50 90 90 60 90 35C90 15 75 5 50 25C25 5 10 15 10 35C10 60 50 90 50 90Z" fill="#ff6b9d" />
+     </svg>
+    </div>
+    <div class="floating-element-reverse absolute top-32 right-20 w-16 h-16 opacity-25">
+     <svg viewbox="0 0 100 100" fill="none"><path d="M50 90C50 90 90 60 90 35C90 15 75 5 50 25C25 5 10 15 10 35C10 60 50 90 50 90Z" fill="#c084fc" />
+     </svg>
+    </div>
+    <div class="floating-element-slow absolute bottom-40 left-20 w-24 h-24 opacity-20">
+     <svg viewbox="0 0 100 100" fill="none"><path d="M50 90C50 90 90 60 90 35C90 15 75 5 50 25C25 5 10 15 10 35C10 60 50 90 50 90Z" fill="#f472b6" />
+     </svg>
+    </div>
+    <div class="floating-element absolute bottom-20 right-10 w-14 h-14 opacity-35">
+     <svg viewbox="0 0 100 100" fill="none"><path d="M50 90C50 90 90 60 90 35C90 15 75 5 50 25C25 5 10 15 10 35C10 60 50 90 50 90Z" fill="#a78bfa" />
+     </svg>
+    </div>
+    <div class="floating-element-reverse absolute top-1/2 left-5 w-12 h-12 opacity-25">
+     <svg viewbox="0 0 100 100" fill="none"><path d="M50 90C50 90 90 60 90 35C90 15 75 5 50 25C25 5 10 15 10 35C10 60 50 90 50 90Z" fill="#ff6b9d" />
+     </svg>
+    </div>
+    <div class="floating-element-slow absolute top-20 left-1/3 w-10 h-10 opacity-20">
+     <svg viewbox="0 0 100 100" fill="none"><path d="M50 90C50 90 90 60 90 35C90 15 75 5 50 25C25 5 10 15 10 35C10 60 50 90 50 90Z" fill="#e879f9" />
+     </svg>
+    </div>
+   </div><!-- Screen 1: Start Screen -->
+   <div id="start-screen" class="screen active flex-col items-center justify-center min-h-full w-full px-4 py-8 relative z-10">
+    <div class="text-center max-w-lg mx-auto"><!-- Main Illustration Placeholder -->
+     <div class="mb-8 relative">
+      <div class="w-48 h-48 mx-auto rounded-full bg-gradient-to-br from-pink-400/30 to-purple-500/30 flex items-center justify-center card-glow pulse-glow">
+       <div id="main-illustration" class="w-40 h-40 rounded-full bg-gradient-to-br from-pink-300/50 to-purple-400/50 flex items-center justify-center text-6xl">
+        💘
+       </div>
+      </div>
+      <div class="absolute -top-2 -right-2 text-4xl floating-element">
+       ✨
+      </div>
+      <div class="absolute -bottom-2 -left-2 text-3xl floating-element-reverse">
+       💫
+      </div>
+     </div><!-- Title -->
+     <h1 id="main-title" class="text-4xl md:text-5xl font-bold text-white mb-3 title-font tracking-wider" style="text-shadow: 0 0 30px rgba(255,107,157,0.5);">💘Lキャラタイプ診断</h1>
+     <p id="subtitle" class="text-pink-200/80 text-lg mb-8">16タイプに分かれるレズビアンのための診断ツール</p><!-- Start Button --> <button id="start-button" onclick="startQuiz()" class="relative group">
+      <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full blur-lg opacity-70 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative px-12 py-4 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full text-white text-xl font-bold shadow-2xl transform transition-all group-hover:scale-105 group-hover:shadow-pink-500/50"><span id="start-button-text">診断をはじめる</span> <span class="ml-2">→</span>
+      </div></button>
+     <p class="text-pink-300/50 text-sm mt-6">全12問・約3分</p>
+    </div>
+   </div><!-- Screen 2: Question Screen -->
+   <div id="question-screen" class="screen flex-col items-center justify-start min-h-full w-full px-4 py-6 relative z-10">
+    <div class="w-full max-w-2xl mx-auto"><!-- Progress Bar -->
+     <div class="mb-6">
+      <div class="flex justify-between text-pink-200/80 text-sm mb-2"><span id="progress-text">1 / 12</span> <span id="progress-percent">8%</span>
+      </div>
+      <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+       <div id="progress-bar" class="progress-bar h-full rounded-full transition-all duration-500" style="width: 8%"></div>
+      </div>
+     </div><!-- Question Card -->
+     <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 card-glow">
+      <div id="question-category" class="text-pink-300 text-sm mb-2 tracking-wider">
+       T/C タイプ
+      </div>
+      <h2 id="question-text" class="text-white text-xl md:text-2xl font-bold mb-8 leading-relaxed">夜のポジションの願望は？</h2><!-- Answer Options (5 Heart Buttons) -->
+      <div class="flex flex-col items-center gap-4">
+       <div class="flex justify-between items-center w-full max-w-md"><span id="option-left" class="text-pink-200 text-sm md:text-base font-medium">攻めたい</span> <span id="option-right" class="text-purple-200 text-sm md:text-base font-medium">攻められたい</span>
+       </div>
+       <div class="flex justify-center items-center gap-3 md:gap-6"><!-- Heart Button 1 (Strong Left) --> <button class="heart-button answer-btn" data-value="2" onclick="selectAnswer(2)">
+         <svg class="heart-shape" viewbox="0 0 100 90"><path d="M50 85C50 85 90 55 90 30C90 10 75 0 50 20C25 0 10 10 10 30C10 55 50 85 50 85Z" fill="#ff6b9d" stroke="#fff" stroke-width="2" />
+         </svg><span class="absolute inset-0 flex items-center justify-center text-white font-bold text-lg pt-1">←←</span> </button> <!-- Heart Button 2 (Slight Left) --> <button class="heart-button answer-btn" data-value="1" onclick="selectAnswer(1)">
+         <svg class="heart-shape" viewbox="0 0 100 90"><path d="M50 85C50 85 90 55 90 30C90 10 75 0 50 20C25 0 10 10 10 30C10 55 50 85 50 85Z" fill="#f9a8c9" stroke="#fff" stroke-width="2" />
+         </svg><span class="absolute inset-0 flex items-center justify-center text-white font-bold text-lg pt-1">←</span> </button> <!-- Heart Button 3 (Neutral) --> <button class="heart-button answer-btn" data-value="0" onclick="selectAnswer(0)">
+         <svg class="heart-shape" viewbox="0 0 100 90"><path d="M50 85C50 85 90 55 90 30C90 10 75 0 50 20C25 0 10 10 10 30C10 55 50 85 50 85Z" fill="#d8b4fe" stroke="#fff" stroke-width="2" />
+         </svg><span class="absolute inset-0 flex items-center justify-center text-white font-bold text-lg pt-1">•</span> </button> <!-- Heart Button 4 (Slight Right) --> <button class="heart-button answer-btn" data-value="-1" onclick="selectAnswer(-1)">
+         <svg class="heart-shape" viewbox="0 0 100 90"><path d="M50 85C50 85 90 55 90 30C90 10 75 0 50 20C25 0 10 10 10 30C10 55 50 85 50 85Z" fill="#c4b5fd" stroke="#fff" stroke-width="2" />
+         </svg><span class="absolute inset-0 flex items-center justify-center text-white font-bold text-lg pt-1">→</span> </button> <!-- Heart Button 5 (Strong Right) --> <button class="heart-button answer-btn" data-value="-2" onclick="selectAnswer(-2)">
+         <svg class="heart-shape" viewbox="0 0 100 90"><path d="M50 85C50 85 90 55 90 30C90 10 75 0 50 20C25 0 10 10 10 30C10 55 50 85 50 85Z" fill="#a78bfa" stroke="#fff" stroke-width="2" />
+         </svg><span class="absolute inset-0 flex items-center justify-center text-white font-bold text-lg pt-1">→→</span> </button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Screen 3: Result Screen -->
+   <div id="result-screen" class="screen flex-col items-center justify-start min-h-full w-full px-4 py-6 relative z-10 overflow-y-auto">
+    <div class="w-full max-w-2xl mx-auto"><!-- Result Card -->
+     <div class="result-card rounded-3xl p-6 md:p-8 card-glow mb-6 fade-in"><!-- Type Badge -->
+      <div class="text-center mb-6">
+       <div id="result-suit" class="text-5xl mb-2">
+        ❤️
+       </div>
+       <div class="type-badge inline-block px-4 py-1 rounded-full text-white text-sm font-bold mb-3"><span id="result-code">TPLO</span>
+       </div>
+       <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">あなたは<br><span id="result-name" class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">ダーククイーン</span><br>
+         タイプ！</h2>
+      </div><!-- Character Illustration -->
+      <div class="w-40 h-40 mx-auto mb-6 rounded-full bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center text-6xl shadow-lg"><span id="result-emoji">👑</span>
+      </div><!-- Description -->
+      <div id="result-description" class="text-gray-600 leading-relaxed text-center mb-6 px-2">
+       恋愛では強気でリードすることが多く、自分のルールに従って動くことを好みます。
+      </div>
+     </div><!-- Compatibility Section -->
+     <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 mb-6 fade-in" style="animation-delay: 0.2s">
+      <h3 class="text-white text-xl font-bold mb-4 text-center">💕 相性診断</h3><!-- Good Match -->
+      <div class="mb-4">
+       <div class="text-pink-300 text-sm mb-2 flex items-center gap-2"><span>✨</span> グッドマッチ
+       </div>
+       <div class="grid grid-cols-2 gap-3" id="good-match-container">
+        <div class="compatibility-card bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-xl p-4 text-center">
+         <div class="text-2xl mb-1" id="good-match-1-emoji">
+          👸
+         </div>
+         <div class="text-white font-bold text-sm" id="good-match-1-name">
+          キングマム
+         </div>
+         <div class="text-pink-200 text-xs" id="good-match-1-code">
+          TKLO
+         </div>
+        </div>
+        <div class="compatibility-card bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-xl p-4 text-center">
+         <div class="text-2xl mb-1" id="good-match-2-emoji">
+          🎭
+         </div>
+         <div class="text-white font-bold text-sm" id="good-match-2-name">
+          エリートバトラー
+         </div>
+         <div class="text-pink-200 text-xs" id="good-match-2-code">
+          TKGO
+         </div>
+        </div>
+       </div>
+      </div><!-- Bad Match -->
+      <div>
+       <div class="text-purple-300 text-sm mb-2 flex items-center gap-2"><span>💔</span> 要注意マッチ
+       </div>
+       <div class="compatibility-card bg-gradient-to-br from-gray-500/20 to-gray-600/20 rounded-xl p-4 text-center max-w-xs mx-auto">
+        <div class="text-2xl mb-1" id="bad-match-emoji">
+         🦊
+        </div>
+        <div class="text-white font-bold text-sm" id="bad-match-name">
+         ヒーローラビット
+        </div>
+        <div class="text-gray-300 text-xs" id="bad-match-code">
+         TPGO
+        </div>
+       </div>
+      </div>
+     </div><!-- Share Section -->
+     <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 mb-6 fade-in" style="animation-delay: 0.4s">
+      <h3 class="text-white text-xl font-bold mb-4 text-center">📤 結果をシェア</h3>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center"><button onclick="copyLink()" class="share-button flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full text-white font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg> リンクをコピー </button> <button onclick="shareToLine()" class="share-button flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-green-500 to-green-600 rounded-full text-white font-medium">
+        <svg class="w-5 h-5" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.88 2 10.54c0 2.95 1.56 5.54 4 7.13V22l3.77-2.06c.73.13 1.48.2 2.23.2 5.52 0 10-3.88 10-8.6C22 5.88 17.52 2 12 2z" />
+        </svg> LINEでシェア </button> <button onclick="shareToX()" class="share-button flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-gray-800 to-black rounded-full text-white font-medium">
+        <svg class="w-5 h-5" viewbox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg> Xでシェア </button>
+      </div>
+     </div><!-- Retry Button -->
+     <div class="text-center fade-in" style="animation-delay: 0.6s"><button onclick="restartQuiz()" class="group relative">
+       <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full blur-lg opacity-50 group-hover:opacity-70 transition-opacity"></div>
+       <div class="relative px-8 py-3 bg-white/10 backdrop-blur-md border-2 border-pink-400/50 rounded-full text-white font-bold transform transition-all group-hover:scale-105">
+        🔄 もう一度診断する
+       </div></button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Character Types Data
+    const characterTypes = {
+      'TPLO': { name: 'ダーククイーン', suit: '❤️', emoji: '👑', group: 'PL',
+        description: '恋愛では強気でリードすることが多く、自分のルールに従って動くことを好みます。相手を引きつけるカリスマ性がありますが、ときに独占的になりすぎることも。感情表現は豊かで、情熱的に恋に向き合います。支配的でありながらも、信頼関係を大切にする一途な一面があります。' },
+      'TPLS': { name: 'キャリアウーマン', suit: '❤️', emoji: '💼', group: 'PL',
+        description: '恋愛は効率重視で計画的に動くタイプです。自立心が強く、相手に頼るよりも自分で解決することを好みます。しかし心の奥では甘えたい気持ちも持っており、信頼できる相手には見せることも。恋の駆け引きよりも、着実な関係を築くことを大切にします。' },
+      'CPLO': { name: 'ファッションリーダー', suit: '❤️', emoji: '👗', group: 'PL',
+        description: '感覚で判断することが多く自分のスタイルを貫くタイプです。しかし、自信がないところもあるため他者に認められることを実は望んでいます。自由で明るい雰囲気を持ち、他者と打ち解けることができます。恋愛では自分の個性を大切にしつつ、ストレスのない関係を好みます。' },
+      'CPLS': { name: 'トレンドライダー', suit: '❤️', emoji: '🎪', group: 'PL',
+        description: '流行や冒険を楽しむタイプで、恋愛にも自由なスタンスを持ちます。縛られるよりも軽やかで柔軟な関係を好みます。新しいことに挑戦する勇気があり、恋も自分らしく楽しむことができます。心の奥では誠実さを持っており、大切な人には真摯に向き合います。' },
+      'TPGO': { name: 'ヒーローラビット', suit: '🟡', emoji: '🐰', group: 'PG',
+        description: '恋愛では積極的に行動し、相手を引っ張ることを好むタイプです。自分の思いを素直に表現し、オープンに恋愛を楽しむことができます。スポーティーな一面もあり、相手にワクワクや情熱を与えます。周囲を巻き込みながら、明るく前向きな関係を築くのが理想です。' },
+      'TPGS': { name: 'ガラスプリンス', suit: '🟡', emoji: '🪞', group: 'PG',
+        description: '外見は自信に満ちていますが、内面では慎重で控えめな面をお持ちです。恋愛では秘密主義で、相手に全てをさらけ出すことは少ないでしょう。ロマンチックな性格であり、甘えることを許してくれる相手を望みます。その繊細さやミステリアスな雰囲気が、周囲の興味を引きつけます。' },
+      'CPGO': { name: 'リトルブラザー', suit: '🟡', emoji: '🧸', group: 'PG',
+        description: '恋愛では甘え上手で可愛らしい印象を与えられるタイプです。自分軸な面もあり、自分の今の思いや感情を大切にします。オープンな性格で、人懐っこく周囲とすぐに打ち解けることができます。柔らかく愛される魅力があり、守ってあげたくなる存在となるでしょう。' },
+      'CPGS': { name: 'オフィスDJ', suit: '🟡', emoji: '🎧', group: 'PG',
+        description: '控えめで内向的ですが、恋愛では相手を大切に思う優しさがあります。秘密主義な面があり、全てをすぐに見せるわけではありません。慎重派な性格ですが、時々周りを驚かせる行動や言動があります。静かで落ち着いた魅力があり、隠れた魅力で相手を惹きつけられます。' },
+      'TKLO': { name: 'キングマム', suit: '☘️', emoji: '👸', group: 'KL',
+        description: '恋愛では頼れる存在として、相手を包み込み支えることを好まれるタイプです。強さと優しさを兼ね備え、恋人に安心感を与えることができます。相手の気持ちに寄り添いながら、自分も時に甘えるバランス感覚を持たれています。安定感と包容力のある性格が、恋愛においても信頼を生むでしょう。' },
+      'TKLS': { name: 'シークレットスパイ', suit: '☘️', emoji: '🕵️', group: 'KL',
+        description: '恋愛では刺激的でミステリアスな魅力を放たれるタイプです。好奇心が旺盛で、恋人をドキドキさせる行動を好まれます。一見慎重に見えますが、内面では情熱に溢れていることもあります。恋愛における駆け引きや冒険心が、関係をより深く魅力的にします。' },
+      'CKLO': { name: 'マリンミューズ', suit: '☘️', emoji: '🧜', group: 'KL',
+        description: '控えめで静かな雰囲気を持たれ、穏やかな恋愛を好まれるタイプです。相手の気持ちを観察しながら、慎重に距離を縮められます。内面には秘めた情熱があり、信頼関係が深まると自然に表現されます。優しさと落ち着きのある性格が、恋愛において信頼できる存在となるでしょう。' },
+      'CKLS': { name: 'ピクシーエルフ', suit: '☘️', emoji: '🧚', group: 'KL',
+        description: '可愛らしく、恋愛そのものに対する理想が明確にあるタイプです。相手のために献身的に行動する姿が、相手の恋心を育てます。自分自身を後回しにしがちなため、相手も同じくらいの熱量で向き合ってくれているかを重視します。軽やかで愛らしい魅力が、恋愛関係において独特の魅力を生みます。' },
+      'TKGO': { name: 'エリートバトラー', suit: '♠️', emoji: '🎭', group: 'KG',
+        description: '恋愛では相手を陰で支えることに幸福を感じるタイプです。一見控えめで礼儀正しく、安定感と安心感を提供されます。自分を前面に出しませんが、内面ではしっかりと考えています。誠実で真面目な性格が、信頼関係を深める大きな魅力となります。' },
+      'TKGS': { name: 'ラブボム', suit: '♠️', emoji: '💣', group: 'KG',
+        description: 'ミステリアスで初めは不思議な印象です。関わっていくほどに魅力が増していき、恋人の特権と言われる一面をたまに見せてくれます。相手を喜ばせることに熱心で二面性があり、刺激的な関係を作られることが多いでしょう。恋愛においては、率直で分かりやすいアプローチを好みます。' },
+      'CKGO': { name: 'ソフトガーディアン', suit: '♠️', emoji: '🛡️', group: 'KG',
+        description: '穏やかで優しく、恋愛では相手を安心させることを大切にされます。守りながらも強要せず、自然な距離感で関係を築かれるタイプです。柔らかく落ち着いた性格が、相手に癒しや安らぎを提供します。情熱的な一瞬よりも、長く暖かい関係に憧れています。' },
+      'CKGS': { name: 'シャイラム', suit: '♠️', emoji: '🐑', group: 'KG',
+        description: '恋愛において非積極的ですが、その性格を面白いと感じてくれる人を好きになりがちです。恋愛では自分から行動することは少ないかもしれません。相手の好意を感じるたびに自身の気持ちに気づき、愛を育てていきます。その純粋さや守ってあげたくなる雰囲気が、恋愛において愛される要素となります。' }
+    };
+
+    // Questions Data
+    const questions = [
+      // T/C Questions (3)
+      { category: 'T/C タイプ', text: '夜のポジションの願望は？', left: '攻めたい', right: '攻められたい', dimension: 'TC' },
+      { category: 'T/C タイプ', text: '自分の容姿に関係なく、下着姿について好きなのは', left: '見る方', right: '見られる方', dimension: 'TC' },
+      { category: 'T/C タイプ', text: '自分はどっち？', left: 'ドS', right: 'ドM', dimension: 'TC' },
+      // P/K Questions (3)
+      { category: 'P/K タイプ', text: '恋人といる時、荷物を持つのは？', left: '持って欲しい', right: '持ってあげたい', dimension: 'PK' },
+      { category: 'P/K タイプ', text: '恋人の理想像は？', left: '受け止めてくれる', right: '頼ってくれる', dimension: 'PK' },
+      { category: 'P/K タイプ', text: '「好き」って言葉は？', left: '言われたい', right: '言いたい', dimension: 'PK' },
+      // G/L Questions (3)
+      { category: 'G/L タイプ', text: 'フォーマルな場での服装はどっちを着たい？', left: 'セットアップ', right: 'ドレス', dimension: 'GL' },
+      { category: 'G/L タイプ', text: '体のラインを強調しない服を選びがち？', left: 'はい', right: 'いいえ', dimension: 'GL' },
+      { category: 'G/L タイプ', text: '初対面で言われてどっちが嬉しい？', left: '「かっこいい」', right: '「かわいい」', dimension: 'GL' },
+      // O/S Questions (3)
+      { category: 'O/S タイプ', text: '自分のセクシャリティを隠していますか？', left: 'オープン', right: '隠している', dimension: 'OS' },
+      { category: 'O/S タイプ', text: '自分に対して他者評価が気になりますか？', left: '気にならない', right: '気になる', dimension: 'OS' },
+      { category: 'O/S タイプ', text: '恋人との関係を公表することに後ろめたさを感じますか？', left: '感じない', right: '感じる', dimension: 'OS' }
+    ];
+
+    // State
+    let currentQuestion = 0;
+    let scores = { TC: 0, PK: 0, GL: 0, OS: 0 };
+    let resultType = '';
+
+    // Default Config
+    const defaultConfig = {
+      main_title: '💘Lキャラタイプ診断',
+      subtitle: '16タイプに分かれるレズビアンのための診断ツール',
+      start_button_text: '診断をはじめる',
+      primary_color: '#ff6b9d',
+      secondary_color: '#c084fc',
+      background_color: '#1a1a2e',
+      text_color: '#ffffff',
+      accent_color: '#f472b6'
+    };
+
+    let config = { ...defaultConfig };
+
+    // Element SDK Integration
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (newConfig) => {
+          config = { ...defaultConfig, ...newConfig };
+          applyConfig();
+        },
+        mapToCapabilities: (cfg) => ({
+          recolorables: [
+            {
+              get: () => cfg.background_color || defaultConfig.background_color,
+              set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+            },
+            {
+              get: () => cfg.primary_color || defaultConfig.primary_color,
+              set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+            },
+            {
+              get: () => cfg.secondary_color || defaultConfig.secondary_color,
+              set: (v) => { cfg.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); }
+            },
+            {
+              get: () => cfg.text_color || defaultConfig.text_color,
+              set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+            },
+            {
+              get: () => cfg.accent_color || defaultConfig.accent_color,
+              set: (v) => { cfg.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (cfg) => new Map([
+          ['main_title', cfg.main_title || defaultConfig.main_title],
+          ['subtitle', cfg.subtitle || defaultConfig.subtitle],
+          ['start_button_text', cfg.start_button_text || defaultConfig.start_button_text]
+        ])
+      });
+    }
+
+    function applyConfig() {
+      document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+      document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
+      document.getElementById('start-button-text').textContent = config.start_button_text || defaultConfig.start_button_text;
+      
+      // Apply colors
+      const container = document.getElementById('app-container');
+      container.style.background = `linear-gradient(135deg, ${config.background_color || defaultConfig.background_color} 0%, #16213e 50%, #0f0f23 100%)`;
+      
+      document.documentElement.style.setProperty('--primary-color', config.primary_color || defaultConfig.primary_color);
+    }
+
+    // Screen Management
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const screen = document.getElementById(screenId);
+      screen.classList.add('active');
+    }
+
+    // Quiz Functions
+    function startQuiz() {
+      currentQuestion = 0;
+      scores = { TC: 0, PK: 0, GL: 0, OS: 0 };
+      showScreen('question-screen');
+      displayQuestion();
+    }
+
+    function displayQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('question-category').textContent = q.category;
+      document.getElementById('question-text').textContent = q.text;
+      document.getElementById('option-left').textContent = q.left;
+      document.getElementById('option-right').textContent = q.right;
+      
+      // Update progress
+      const progress = ((currentQuestion + 1) / questions.length) * 100;
+      document.getElementById('progress-text').textContent = `${currentQuestion + 1} / ${questions.length}`;
+      document.getElementById('progress-percent').textContent = `${Math.round(progress)}%`;
+      document.getElementById('progress-bar').style.width = `${progress}%`;
+      
+      // Reset button states
+      document.querySelectorAll('.answer-btn').forEach(btn => btn.classList.remove('selected'));
+    }
+
+    function selectAnswer(value) {
+      const q = questions[currentQuestion];
+      scores[q.dimension] += value;
+      
+      // Visual feedback
+      const buttons = document.querySelectorAll('.answer-btn');
+      buttons.forEach(btn => {
+        if (parseInt(btn.dataset.value) === value) {
+          btn.classList.add('selected');
+        }
+      });
+      
+      // Next question or show result
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          displayQuestion();
+        } else {
+          calculateResult();
+        }
+      }, 300);
+    }
+
+    function calculateResult() {
+      const t = scores.TC > 0 ? 'T' : 'C';
+      const p = scores.PK > 0 ? 'P' : 'K';
+      const g = scores.GL > 0 ? 'G' : 'L';
+      const o = scores.OS > 0 ? 'O' : 'S';
+      
+      resultType = t + p + g + o;
+      displayResult();
+    }
+
+    function displayResult() {
+      const type = characterTypes[resultType];
+      if (!type) return;
+      
+      document.getElementById('result-suit').textContent = type.suit;
+      document.getElementById('result-code').textContent = resultType;
+      document.getElementById('result-name').textContent = type.name;
+      document.getElementById('result-emoji').textContent = type.emoji;
+      document.getElementById('result-description').textContent = type.description;
+      
+      // Calculate compatibility
+      const matches = calculateCompatibility(resultType);
+      
+      // Good matches
+      if (matches.good.length >= 1) {
+        const good1 = characterTypes[matches.good[0]];
+        document.getElementById('good-match-1-emoji').textContent = good1.emoji;
+        document.getElementById('good-match-1-name').textContent = good1.name;
+        document.getElementById('good-match-1-code').textContent = matches.good[0];
+      }
+      if (matches.good.length >= 2) {
+        const good2 = characterTypes[matches.good[1]];
+        document.getElementById('good-match-2-emoji').textContent = good2.emoji;
+        document.getElementById('good-match-2-name').textContent = good2.name;
+        document.getElementById('good-match-2-code').textContent = matches.good[1];
+      }
+      
+      // Bad match
+      if (matches.bad.length >= 1) {
+        const bad = characterTypes[matches.bad[0]];
+        document.getElementById('bad-match-emoji').textContent = bad.emoji;
+        document.getElementById('bad-match-name').textContent = bad.name;
+        document.getElementById('bad-match-code').textContent = matches.bad[0];
+      }
+      
+      showScreen('result-screen');
+    }
+
+    function calculateCompatibility(type) {
+      const t = type[0]; // T or C
+      const p = type[1]; // P or K
+      const g = type[2]; // G or L
+      const o = type[3]; // O or S
+      
+      const allTypes = Object.keys(characterTypes);
+      const good = [];
+      const bad = [];
+      
+      for (const otherType of allTypes) {
+        if (otherType === type) continue;
+        
+        const ot = otherType[0];
+        const op = otherType[1];
+        const og = otherType[2];
+        const oo = otherType[3];
+        
+        let score = 0;
+        let badFlags = 0;
+        
+        // T and C are compatible, T+T or C+C are not
+        if ((t === 'T' && ot === 'C') || (t === 'C' && ot === 'T')) {
+          score += 2;
+        } else {
+          badFlags++;
+        }
+        
+        // P+P is bad
+        if (p === 'P' && op === 'P') {
+          badFlags++;
+        }
+        
+        // P+C is bad
+        if ((p === 'P' && ot === 'C') || (op === 'P' && t === 'C')) {
+          badFlags++;
+        }
+        
+        // K+K is good
+        if (p === 'K' && op === 'K') {
+          score += 2;
+        }
+        
+        // G+O same is bad
+        if (g === 'G' && o === 'O' && og === 'G' && oo === 'O') {
+          badFlags++;
+        }
+        
+        // K+G same is bad
+        if (p === 'K' && g === 'G' && op === 'K' && og === 'G') {
+          badFlags++;
+        }
+        
+        // TS and CO don't match
+        if ((t === 'T' && o === 'S' && ot === 'C' && oo === 'O') ||
+            (t === 'C' && o === 'O' && ot === 'T' && oo === 'S')) {
+          badFlags++;
+        }
+        
+        if (badFlags === 0 && score >= 2) {
+          good.push(otherType);
+        } else if (badFlags >= 2) {
+          bad.push(otherType);
+        }
+      }
+      
+      // For good matches, try to return one G and one L variant
+      const goodL = good.filter(t => t[2] === 'L');
+      const goodG = good.filter(t => t[2] === 'G');
+      const finalGood = [];
+      if (goodL.length > 0) finalGood.push(goodL[0]);
+      if (goodG.length > 0) finalGood.push(goodG[0]);
+      if (finalGood.length < 2 && good.length > finalGood.length) {
+        for (const g of good) {
+          if (!finalGood.includes(g)) {
+            finalGood.push(g);
+            if (finalGood.length >= 2) break;
+          }
+        }
+      }
+      
+      return {
+        good: finalGood.slice(0, 2),
+        bad: bad.slice(0, 1)
+      };
+    }
+
+    // Share Functions
+    function copyLink() {
+      const text = `💘Lキャラタイプ診断の結果は【${characterTypes[resultType].name}】(${resultType})タイプでした！`;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✓ コピーしました！';
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+      });
+    }
+
+    function shareToLine() {
+      const text = encodeURIComponent(`💘Lキャラタイプ診断の結果は【${characterTypes[resultType].name}】(${resultType})タイプでした！`);
+      window.open(`https://line.me/R/msg/text/?${text}`, '_blank', 'noopener,noreferrer');
+    }
+
+    function shareToX() {
+      const text = encodeURIComponent(`💘Lキャラタイプ診断の結果は【${characterTypes[resultType].name}】(${resultType})タイプでした！\n\n#Lキャラタイプ診断`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank', 'noopener,noreferrer');
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      scores = { TC: 0, PK: 0, GL: 0, OS: 0 };
+      resultType = '';
+      showScreen('start-screen');
+    }
+
+    // Initialize
+    applyConfig();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c9805d272f6d805',t:'MTc3MDM1MzM4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
