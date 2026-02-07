@@ -413,8 +413,18 @@
      </div>
 		
 		<!-- Main result card -->
-     <div class="result-card p-6 md:p-8 mb-6"><!-- Character illustration -->
-      <div class="w-40 h-40 mx-auto mb-4"><img id="result-image" src="images/TPLO.png" alt="キャライラスト" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-5xl\'>👑</div>'">
+     <div class="result-card p-6 md:p-8 mb-6">
+		 
+		 <!-- Character illustration -->
+      <div class="w-40 h-40 mx-auto mb-4">
+		  
+		  <img id="result-image" src="images/TPLO.png" 
+			   alt="キャライラスト" 
+			  class="max-w-full max-h-full object-contain"
+			   loading="lazy" 
+			   onerror="this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-5xl\'>👑</div>'">
+		  
+		  
       </div><!-- Type name -->
       <div class="text-center mb-4">
        <p class="font-english text-lg text-purple-600 font-bold mb-1" id="result-code">TPLO</p>
