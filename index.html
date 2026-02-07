@@ -315,32 +315,31 @@
 <!-- Question Screen -->
 <div
   id="question-screen"
-  class="screen hidden flex flex-col items-center min-h-screen w-full"
+  class="screen hidden flex flex-col items-center min-h-screen w-full px-4 md:px-6"
 >
+  <!-- Progress section -->
+  <div class="w-full max-w-lg mb-6">
+    <div class="flex justify-between items-center mb-2">
+      <span class="text-sm font-medium text-white">
+        質問 <span id="current-q">1</span> / <span id="total-q">12</span>
+      </span>
+    </div>
 
-	   
-	<!-- Progress section -->
-<div class="w-full max-w-md mb-6 px-4 md:px-6">
-  <div class="flex justify-between items-center mb-2">
-    <span class="text-sm font-medium text-white">
-      質問 <span id="current-q">1</span> / <span id="total-q">12</span>
-    </span>
+    <div class="w-full h-3 bg-white rounded-full overflow-hidden">
+      <div
+        id="progress-bar"
+        class="progress-bar h-full rounded-full"
+        style="width: 8.33%"
+      ></div>
+    </div>
   </div>
 
-  <div class="w-full h-3 bg-white rounded-full overflow-hidden">
-    <div
-      id="progress-bar"
-      class="progress-bar h-full rounded-full"
-      style="width: 8.33%"
-    ></div>
-  </div>
-</div>
+  <!-- Question card -->
+  <div class="w-full max-w-lg bg-white rounded-3xl shadow-xl p-6 md:p-8 mb-8">
+    <h2 id="question-text" class="text-lg md:text-xl font-bold text-gray-800 text-center mb-8 leading-relaxed">
+      夜のポジションの願望は？
+    </h2>
 
-	   
-	   <!-- Question card -->
-   <div class="w-full max-w-md mx-4 bg-white rounded-3xl shadow-xl p-8 mb-12">
-     <h2 id="question-text" class="text-lg md:text-xl font-bold text-gray-800 text-center mb-8 leading-relaxed">
-		 夜のポジションの願望は？</h2>
 		
 		
 		<!-- 回答ハートボタン heart buttons -->
