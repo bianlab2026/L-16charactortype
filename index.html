@@ -17,7 +17,6 @@
 	  /*全体の背景色*/
   background: linear-gradient(135deg, #361D5F,#445B96,#361D5F) !important;
 }
-
     
     :root {
       --primary-pink: #FF6B9D;
@@ -68,7 +67,7 @@
 .heart-btn {
   width: 40px;
   height: 40px;
-  padding: -1;
+  padding: 0;
   border: none;
   background: none;
   cursor: pointer;
@@ -82,8 +81,8 @@
 		
 
 .heart-btn svg {
-  width: 56px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
   fill: #e0e0e0;
   transition: 0.25s ease;
 }
@@ -343,7 +342,7 @@
 		
 		
 		<!-- 回答ハートボタン heart buttons -->
-     <div class="flex justify-center items-center gap-1 mb-8"><!-- items-center gap-3 mb-8"はボタン同士の距離 -->
+     <div class="flex justify-center items-center gap-1 smb-8"><!-- items-center gap-3 mb-8"はボタン同士の距離 -->
 		 
 <button class="answer-btn" data-value="2" title="Strong Left">
        <div class="heart-btn">
@@ -426,8 +425,8 @@
 		  
       </div><!-- Type name -->
       <div class="text-center mb-4">
-       <p class="font-english text-lg text-purple-600 font-bold mb-1" id="result-code">TPLO</p>
-       <h2 class="text-2xl md:text-3xl font-bold text-gray-800" id="result-name">ダーククイーン</h2>
+       <p class="font-english text-lg text-gray-400 font-bold mb-1" id="result-code">TPLO</p>
+       <h2 class="text-3xl md:text-3xl font-bold text-gray-800" id="result-name">ダーククイーン</h2>
       </div><!-- Description -->
       <p id="result-description" class="text-gray-600 text-sm leading-relaxed text-center">恋愛では強気でリードすることが多く、自分のルールに従って動くことを好みます。 相手を引きつけるカリスマ性がありますが、ときに独占的になりすぎることも。</p>
      </div><!-- Compatibility section -->
@@ -477,7 +476,7 @@
     const defaultConfig = {
       main_title: '💘Lキャラタイプ診断',
       subtitle: 'レズビアンのための16タイプ診断ツール',
-      start_button_text: '診断スタート ♡',
+      start_button_text: '診断スタート！',
       primary_color: '#FF6B9D',
       secondary_color: '#9B7ED9',
       background_color: '#FFF8F0',
@@ -493,38 +492,52 @@
     // Character data
     const characters = {
       'TPLO': { name: 'ダーククイーン', type: 'PL型', symbol: '❤️', badge: 'badge-heart',
-        description: '恋愛では強気でリードすることが多く、自分のルールに従って動くことを好みます。相手を引きつけるカリスマ性がありますが、ときに独占的になりすぎることも。感情表現は豊かで、情熱的に恋に向き合います。' },
+        description: '恋愛では強気でリードすることが多く、自分のルールに従って動くことを好みます。相手を引きつけるカリスマ性がありますが、ときに独占的になりすぎることも。感情表現は豊かで、情熱的に恋に向き合います。'},
+		
       'TPLS': { name: 'キャリアウーマン', type: 'PL型', symbol: '❤️', badge: 'badge-heart',
-        description: '普段はみんなの頼れるお姉さん。恋愛においても自立心が強く、相手に頼るよりも自分で解決することを好みます。しかし心の奥では甘えたい気持ちも持っており、信頼できる相手には見せることも。見た目とは裏腹な刺激的な恋を求めるタイプです。
-' },
+        description: '普段はみんなの頼れるお姉さん。恋愛においても自立心が強く、相手に頼るよりも自分で解決することを好みます。しかし心の奥では甘えたい気持ちも持っており、信頼できる相手には見せることも。見た目とは裏腹な刺激的な恋を求めるタイプです。'},
+			   
       'CPLO': { name: 'ファッションリーダー', type: 'PL型', symbol: '❤️', badge: 'badge-heart',
         description: '感覚で判断することが多く自分のスタイルを貫くタイプです。自由で明るい雰囲気を持つため、誰とでも打ち解けることができます。しかし、自信のなさから実は誰かに認められることを望んでいます。恋愛では自分の個性を大切にしつつ、ストレスのない関係を好みます。' },
+		
       'CPLS': { name: 'トレンドライダー', type: 'PL型', symbol: '❤️', badge: 'badge-heart',
         description: '流行や冒険を楽しむタイプで、恋愛にも自由なスタンスを持ちます。縛られるよりも軽やかで柔軟な関係を好むため、新しいことに挑戦する勇気があり、恋も自分らしく楽しむことができます。しかし、飽きっぽさから刺激的な恋に翻弄されることも。' },
+		
       'TPGO': { name: 'ヒーローラビット', type: 'PG型', symbol: '✨', badge: 'badge-diamond',
         description: '恋愛では積極的に行動し、誰からも好かれるタイプです。自分の思いを素直に表現し、オープンに恋愛を楽しむことができます。相手にワクワクや情熱を与えることに喜びを感じます。周囲を巻き込みながら、明るく前向きな関係を築くのが理想です。' },
+		
       'TPGS': { name: 'ガラスプリンス', type: 'PG型', symbol: '✨', badge: 'badge-diamond',
         description: '外見は自信に満ちていますが、内面では慎重で控えめな面をお持ちです。恋愛においては秘密主義で、相手に全てをさらけ出すことは少ないでしょう。ロマンチックな性格であり、甘えることを許してくれる相手を望みます。その繊細さやミステリアスな雰囲気が、周囲の興味を引きつけます。' },
+		
       'CPGO': { name: 'リトルブラザー', type: 'PG型', symbol: '✨', badge: 'badge-diamond',
         description: '恋愛では甘え上手で可愛らしい印象を与えられるタイプです。自分軸な面もあり、自分の今の思いや感情を大切にします。人懐っこく周囲とすぐに打ち解けることができ、柔らかく愛される魅力があるため、守ってあげたくなる存在となるでしょう。' },
+		
       'CPGS': { name: 'オフィスDJ', type: 'PG型', symbol: '✨', badge: 'badge-diamond',
         description: '控えめで内向的ですが、恋愛では相手を大切に思う優しさがあります。秘密主義な面があり、全てをすぐに見せるわけではありません。静かで落ち着いた魅力があり、隠れた魅力で相手を惹きつけられます。' },
+		
       'TKLO': { name: 'キングマム', type: 'KL型', symbol: '☘️', badge: 'badge-clover',
         description: '恋愛では頼れる存在として、相手を包み込み支えることを好むタイプです。強さと優しさを兼ね備え、恋人に安心感を与えることができるだけでなく、相手の気持ちに寄り添いながらも自分も時に甘えるバランス感覚を持ちます。安定感と包容力のある性格が、恋愛においても信頼を生むでしょう。' },
+		
       'TKLS': { name: 'シークレットスパイ', type: 'KL型', symbol: '☘️', badge: 'badge-clover',
         description: '恋愛では刺激的でミステリアスな魅力を放つタイプです。好奇心が旺盛で、恋人をドキドキさせる行動を好みます。一見慎重に見えますが、内面では情熱に溢れており、その情熱が関係をより深く魅力的にします。' },
+		
       'CKLO': { name: 'マリンミューズ', type: 'KL型', symbol: '☘️', badge: 'badge-clover',
         description: '控えめで静かな雰囲気を持ち、穏やかな恋愛を好むタイプです。相手の気持ちを観察しながら、慎重に距離を縮めます。内面には秘めた情熱があり、信頼関係が深まるとその愛情が自然に表現されるでしょう。観察力が高いため、相手の嘘を見抜くのが得意です。' },
+		
       'CKLS': { name: 'ピクシーエルフ', type: 'KL型', symbol: '☘️', badge: 'badge-clover',
         description: '可愛らしく、恋愛そのものに対する理想が明確にあるタイプです。相手のために献身的に行動する姿が、相手の恋心を育てます。自分自身を後回しにしがちなため、無償の愛を注ぎがちです。軽やかで愛らしい魅力が、日々の生活にささやかな幸せを生みます。' },
+		
       'TKGO': { name: 'エリートバトラー', type: 'KG型', symbol: '♠️', badge: 'badge-spade',
         description: '恋愛では相手を陰で支えることに幸福を感じるタイプです。一見控えめで礼儀正しく、安定感と安心感を提供されます。誠実で真面目な性格が、信頼関係を深める大きな魅力となります。' },
+		
       'TKGS': { name: 'ラブボム', type: 'KG型', symbol: '♠️', badge: 'badge-spade',
-        description: 'ミステリアスで初めは不思議な印象です。関わっていくほどに魅力が増していき、恋人の特権と言われる一面をたまに見せてくれ���す。恋愛においては、率直で分か��やすいアプローチを好みます。' },
+        description: 'ミステリアスで初めは不思議な印象です。関わっていくほどに魅力が増していき、恋人の特権と言われる一面を見せてくれます。恋愛においては、率直で分かりやすいアプローチを好みます。' },
+		
       'CKGO': { name: 'ソフトガーディアン', type: 'KG型', symbol: '♠️', badge: 'badge-spade',
-        description: '穏やかで優しく、恋愛では相手を安心させることを大切にされます。守りながらも強要せず、自然な距離感で関係を築かれるタイプです。柔らかく落ち着いた性格が、相手に癒しや安らぎを提供します。' },
+        description: '穏やかで優しく、恋愛では相手を安心させることを大切にします。守りながらも強要せず、自然な距離感で関係を築くタイプです。柔らかく落ち着いた性格が、相手に癒しや安らぎを提供します。' },
+		
       'CKGS': { name: 'シャイラム', type: 'KG型', symbol: '♠️', badge: 'badge-spade',
-        description: '恋愛において非積極的ですが、その性格を面白いと感じてくれる人を好きになりがちです。相手の好意を感じるたびに自身の気持ちに気づき、愛を育てていきます。その純真さが、恋愛において愛される要素となります。' }
+        description: '恋愛においては慎重派なタイプ。その性格を面白いと感じてくれる人を好きになりがちです。相手の好意を感じるたびに自身の気持ちに気づき、愛を育てていきます。その純真さが、恋愛において愛される要素となります。' }
     };
     
     // Questions data
