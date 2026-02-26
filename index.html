@@ -764,30 +764,32 @@
       showScreen('result');
     }
     
-    function updateShareLinks(type, name) {
-      const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！`;
-      const shareUrl = window.location.href;
-      
-      const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
-      document.getElementById('line-share-btn').href = lineUrl;
-      
-      const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-      document.getElementById('x-share-btn').href = xUrl;
-    }
-    
-    function copyLink() {
-      const type = document.getElementById('result-code').textContent;
-      const name = document.getElementById('result-name').textContent;
-      const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！\n${window.location.href}`;
-      
-      navigator.clipboard.writeText(shareText).then(() => {
-        const successMsg = document.getElementById('copy-success');
-        successMsg.classList.remove('hidden');
-        setTimeout(() => {
-          successMsg.classList.add('hidden');
-        }, 2000);
-      });
-    }
+const BASE_URL = "https://bian-lab.studio.site/";
+
+function updateShareLinks(type, name) {
+  const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！`;
+  const shareUrl = BASE_URL;
+
+  const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+  document.getElementById('line-share-btn').href = lineUrl;
+
+  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+  document.getElementById('x-share-btn').href = xUrl;
+}
+
+function copyLink() {
+  const type = document.getElementById('result-code').textContent;
+  const name = document.getElementById('result-name').textContent;
+  const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！\n${BASE_URL}`;
+
+  navigator.clipboard.writeText(shareText).then(() => {
+    const successMsg = document.getElementById('copy-success');
+    successMsg.classList.remove('hidden');
+    setTimeout(() => {
+      successMsg.classList.add('hidden');
+    }, 2000);
+  });
+}
     
     async function onConfigChange(newConfig) {
       config = { ...defaultConfig, ...newConfig };
