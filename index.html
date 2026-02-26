@@ -782,13 +782,31 @@ function copyLink() {
   const name = document.getElementById('result-name').textContent;
   const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！\n${BASE_URL}`;
 
-  navigator.clipboard.writeText(shareText).then(() => {
+  function showSuccess() {
     const successMsg = document.getElementById('copy-success');
     successMsg.classList.remove('hidden');
     setTimeout(() => {
       successMsg.classList.add('hidden');
     }, 2000);
-  });
+  }
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(shareText)
+      .then(showSuccess)
+      .catch(fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
+
+  function fallbackCopy() {
+    const textarea = document.createElement("textarea");
+    textarea.value = shareText;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+    showSuccess();
+  }
 }
     
     async function onConfigChange(newConfig) {
