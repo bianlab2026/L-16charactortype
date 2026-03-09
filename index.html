@@ -767,7 +767,7 @@
 const BASE_URL = "https://bian-lab.studio.site/";
 
 function updateShareLinks(type, name) {
-  const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！`;
+  const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！#Lキャラタイプ診断 #セクマイラブタイプ`;
   const shareUrl = BASE_URL;
 
   const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
@@ -780,7 +780,7 @@ function updateShareLinks(type, name) {
 function copyLink() {
   const type = document.getElementById('result-code').textContent;
   const name = document.getElementById('result-name').textContent;
-  const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！\n${BASE_URL}`;
+  const shareText = `Lキャラタイプ診断の結果は【${name}】(${type})タイプでした！#Lキャラタイプ診断 #セクマイラブタイプ\n${BASE_URL}`;
 
   function showSuccess() {
     const successMsg = document.getElementById('copy-success');
