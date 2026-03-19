@@ -212,14 +212,27 @@ background:linear-gradient(135deg,#ff4d6d,#ff8fab);
     }
     
     /* Share buttons */
-    .share-btn {
-      transition: all 0.3s ease;
-    }
-    
-    .share-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
+  .share-btn {
+  width: 50px;           /* 正円のサイズ */
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;    /* 正円 */
+  background-color: #f3f3f3; /* 好きな色に変更 */
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.share-btn:hover {
+  transform: scale(1.1);
+  background-color: #e0e0e0; /* ホバー色 */
+}
+
+.share-btn svg {
+  width: 24px;  /* アイコンサイズ */
+  height: 24px;
+  color: #000;  /* アイコン色 */
+}
 		
 		
 		
@@ -248,7 +261,10 @@ background:linear-gradient(135deg,#ff4d6d,#ff8fab);
   box-shadow: none;
 }
 
-
+/* 診断中画面の上に余白を追加 */
+#question-screen {
+  padding-top: 80px; /* ボタンと被らない余白 */
+}
    
   </style>
 	 
@@ -264,7 +280,8 @@ background:linear-gradient(135deg,#ff4d6d,#ff8fab);
   
 	 
 	 <div id="app" class="w-full h-full relative">
-	  
+	  <!-- トップに戻るボタン -->
+<img id="back-to-top" src="./images/backtotop.png" alt="トップに戻る" class="fixed top-4 left-4 w-12 h-12 cursor-pointer z-50">
 	  
 	  <!-- Start Screen -->
    <div id="start-screen" class="screen active flex-col items-center justify-center min-h-full w-full p-6 relative overflow-hidden">
@@ -467,9 +484,7 @@ background:linear-gradient(135deg,#ff4d6d,#ff8fab);
     <div class="w-full max-w-lg"><!-- Result header -->
      <div class="text-center mb-6">
       <p class="text-sm text-white mb-2">あなたの診断結果は...</p>
-      <div id="type-badge" class="inline-block px-4 py-1 rounded-full text-white text-sm font-bold mb-3 badge-heart">
-       ❤️ PL型
-      </div>
+      
      </div>
 		
 		<!-- Main result card -->
@@ -489,53 +504,86 @@ background:linear-gradient(135deg,#ff4d6d,#ff8fab);
       <div class="text-center mb-4">
        <p class="font-english text-lg text-gray-400 font-bold mb-1" id="result-code">TPLO</p>
        <h2 class="text-3xl md:text-3xl font-bold text-gray-800" id="result-name">ダーククイーン</h2>
+		  <div id="type-badge" class="inline-block px-4 py-1 rounded-full text-white text-sm font-bold mb-3 badge-heart">
+       ❤️ PL型
+      </div>
       </div><!-- Description -->
       <p id="result-description" class="text-gray-600 text-sm leading-relaxed text-center">恋愛では強気でリードすることが多く、自分のルールに従って動くことを好みます。 相手を引きつけるカリスマ性がありますが、ときに独占的になりすぎることも。</p>
      </div><!-- Compatibility section -->
      <div class="bg-white rounded-2xl shadow-lg p-5 mb-6">
-      <h3 class="text-center font-bold text-gray-800 mb-4">💕 相性診断</h3><!-- Good matches -->
-      <div class="mb-4">
-       <p class="text-xs text-green-600 font-medium mb-2 flex items-center gap-1"><span>✨</span> 相性ぴったり</p>
-       <div class="flex gap-3">
-        <div class="flex-1 bg-green-50 rounded-xl p-3 text-center">
-         <p class="font-english text-sm font-bold text-green-700" id="match1-code">CKGO</p>
-         <p class="text-xs text-green-600" id="match1-name">ソフトガーディアン</p>
-        </div>
-        <div class="flex-1 bg-green-50 rounded-xl p-3 text-center">
-         <p class="font-english text-sm font-bold text-green-700" id="match2-code">CKLO</p>
-         <p class="text-xs text-green-600" id="match2-name">マリンミューズ</p>
-        </div>
-       </div>
-      </div><!-- Bad match -->
-      <div>
-       <p class="text-xs text-red-400 font-medium mb-2 flex items-center gap-1"><span>⚠️</span> 相性注意</p>
-       <div class="bg-red-50 rounded-xl p-3 text-center">
-        <p class="font-english text-sm font-bold text-red-400" id="bad-match-code">TPGO</p>
-        <p class="text-xs text-red-400" id="bad-match-name">ヒーローラビット</p>
-       </div>
-      </div>
+      <h3 class="text-center font-bold text-gray-800 mb-4">💕 相性診断</h3>
+		 
+		 <!-- Good matches -->
+<div class="mb-4">
+  <p class="text-xs text-green-600 font-medium mb-2 flex items-center gap-1"><span>✨</span> 相性ぴったり</p>
+  <div class="flex gap-3">
+    <div class="flex-1 bg-green-50 rounded-xl p-3 text-center">
+      <img id="match1-image" class="w-full h-24 object-contain mb-1" src="" alt="Match1">
+      <p class="font-english text-sm font-bold text-green-700" id="match1-code">CKGO</p>
+      <p class="text-xs text-green-600" id="match1-name">ソフトガーディアン</p>
+    </div>
+    <div class="flex-1 bg-green-50 rounded-xl p-3 text-center">
+      <img id="match2-image" class="w-full h-24 object-contain mb-1" src="" alt="Match2">
+      <p class="font-english text-sm font-bold text-green-700" id="match2-code">CKLO</p>
+      <p class="text-xs text-green-600" id="match2-name">マリンミューズ</p>
+    </div>
+  </div>
+</div>
+
+<!-- Bad match -->
+<div>
+  <p class="text-xs text-red-400 font-medium mb-2 flex items-center gap-1"><span>⚠️</span> 相性注意</p>
+  <div class="bg-red-50 rounded-xl p-3 text-center">
+    <img id="bad-match-image" class="w-full h-24 object-contain mb-1" src="" alt="BadMatch">
+    <p class="font-english text-sm font-bold text-red-400" id="bad-match-code">TPGO</p>
+    <p class="text-xs text-red-400" id="bad-match-name">ヒーローラビット</p>
+  </div>
+</div>
+		 
+		 
      </div><!-- Share section -->
      <div class="bg-white rounded-2xl shadow-lg p-5 mb-6">
       <h3 class="text-center font-bold text-gray-800 mb-4">📤 結果をシェア</h3>
-      <div class="flex gap-3 justify-center flex-wrap"><!-- Copy link --> <button id="copy-link-btn" class="share-btn flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 text-sm font-medium">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-        </svg> リンクをコピー </button> 
+      <div class="flex gap-3 justify-center flex-wrap">
+		  
+		  <!-- Copy link --> 
+	<button id="copy-link-btn" class="share-btn">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+    </svg>
+  </button>
 		  
 		   <!-- tiktok share --> 
-		 <button id="tiktok-share-btn"
-class="share-btn flex items-center gap-2 px-4 py-2 bg-pink-500 hover:bg-pink-600 rounded-full text-white text-sm font-medium">
-📝 画像を保存
-</button>
+		<button id="tiktok-share-btn" class="share-btn">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+    <path d="M4 13v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+    <path d="M12 3v8" />
+    <path d="M8 9l4 4 4-4" />
+  </svg>
+  </button>
 		  
 		  
 		  
 		  
-		  <!-- LINE share --> <a id="line-share-btn" href="#" target="_blank" rel="noopener noreferrer" class="share-btn flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 rounded-full text-white text-sm font-medium">
-        <svg class="w-4 h-4" viewbox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.349 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"></path>
-        </svg> LINE </a> <!-- X (Twitter) share --> <a id="x-share-btn" href="#" target="_blank" rel="noopener noreferrer" class="share-btn flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-800 rounded-full text-white text-sm font-medium">
-        <svg class="w-4 h-4" viewbox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-        </svg> X </a>
-      </div><!-- Copy success message -->
+		  <!-- LINE share -->
+		  <a id="line-share-btn" href="#" target="_blank" rel="noopener noreferrer" class="share-btn">
+    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.349 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"></path>
+    </svg>
+  </a>
+		
+		    <!-- X -->
+  <a id="x-share-btn" href="#" target="_blank" rel="noopener noreferrer" class="share-btn">
+    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+    </svg>
+  </a>
+</div>
+		  
+		  
+
+		 <!-- Copy success message -->
       <p id="copy-success" class="text-center text-green-600 text-sm mt-3 hidden">✓ コピーしました！</p>
      </div><!-- Retry button --> <button id="retry-btn" class="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"> もう一度診断する 🔄 </button>
     </div>
@@ -785,15 +833,25 @@ class="share-btn flex items-center gap-2 px-4 py-2 bg-pink-500 hover:bg-pink-600
       if (match1) {
         document.getElementById('match1-code').textContent = compat.good[0];
         document.getElementById('match1-name').textContent = match1.name;
-      }
+      
+		document.getElementById('match1-image').src = `images/${compat.good[0]}.png`;
+  document.getElementById('match1-image').alt = match1.name;
+}
+	  
       if (match2) {
         document.getElementById('match2-code').textContent = compat.good[1];
         document.getElementById('match2-name').textContent = match2.name;
-      }
+       document.getElementById('match2-image').src = `images/${compat.good[1]}.png`;
+  document.getElementById('match2-image').alt = match2.name;
+	  }
+	  
+	  
       if (badMatch) {
         document.getElementById('bad-match-code').textContent = compat.bad;
         document.getElementById('bad-match-name').textContent = badMatch.name;
-      }
+       document.getElementById('bad-match-image').src = `images/${compat.bad}.png`;
+  document.getElementById('bad-match-image').alt = badMatch.name;
+}
       
       updateShareLinks(type, char.name);
       
@@ -1009,5 +1067,93 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </div>
 	 
+	 <script>
+const characters = {
+  'TPLO': { name: 'ダーククイーン', type: 'PL型', symbol: '❤️', badge: 'badge-heart',
+        description: '恋愛では強気でリードすることが多く、自分のルールに従って動くことを好みます。相手を引きつけるカリスマ性がありますが、ときに独占的になりすぎることも。感情表現は豊かで、情熱的に恋に向き合います。'},
+		
+      'TPLS': { name: 'キャリアウーマン', type: 'PL型', symbol: '❤️', badge: 'badge-heart',
+        description: '普段はみんなの頼れるお姉さん。恋愛においても自立心が強く、相手に頼るよりも自分で解決することを好みます。しかし心の奥では甘えたい気持ちも持っており、信頼できる相手には見せることも。見た目とは裏腹な刺激的な恋を求めるタイプです。'},
+			   
+      'CPLO': { name: 'ファッションリーダー', type: 'PL型', symbol: '❤️', badge: 'badge-heart',
+        description: '感覚で判断することが多く自分のスタイルを貫くタイプです。自由で明るい雰囲気を持つため、誰とでも打ち解けることができます。しかし、自信のなさから実は誰かに認められることを望んでいます。恋愛では自分の個性を大切にしつつ、ストレスのない関係を好みます。' },
+		
+      'CPLS': { name: 'トレンドライダー', type: 'PL型', symbol: '❤️', badge: 'badge-heart',
+        description: '流行や冒険を楽しむタイプで、恋愛にも自由なスタンスを持ちます。縛られるよりも軽やかで柔軟な関係を好むため、新しいことに挑戦する勇気があり、恋も自分らしく楽しむことができます。しかし、飽きっぽさから刺激的な恋に翻弄されることも。' },
+		
+      'TPGO': { name: 'ヒーローラビット', type: 'PG型', symbol: '✨', badge: 'badge-diamond',
+        description: '恋愛では積極的に行動し、誰からも好かれるタイプです。自分の思いを素直に表現し、オープンに恋愛を楽しむことができます。相手にワクワクや情熱を与えることに喜びを感じます。周囲を巻き込みながら、明るく前向きな関係を築くのが理想です。' },
+		
+      'TPGS': { name: 'ガラスプリンス', type: 'PG型', symbol: '✨', badge: 'badge-diamond',
+        description: '外見は自信に満ちていますが、内面では慎重で控えめな面をお持ちです。恋愛においては秘密主義で、相手に全てをさらけ出すことは少ないでしょう。ロマンチックな性格であり、甘えることを許してくれる相手を望みます。その繊細さやミステリアスな雰囲気が、周囲の興味を引きつけます。' },
+		
+      'CPGO': { name: 'リトルブラザー', type: 'PG型', symbol: '✨', badge: 'badge-diamond',
+        description: '恋愛では甘え上手で可愛らしい印象を与えられるタイプです。自分軸な面もあり、自分の今の思いや感情を大切にします。人懐っこく周囲とすぐに打ち解けることができ、柔らかく愛される魅力があるため、守ってあげたくなる存在となるでしょう。' },
+		
+      'CPGS': { name: 'オフィスDJ', type: 'PG型', symbol: '✨', badge: 'badge-diamond',
+        description: '控えめで内向的ですが、恋愛では相手を大切に思う優しさがあります。秘密主義な面があり、全てをすぐに見せるわけではありません。静かで落ち着いた魅力があり、隠れた魅力で相手を惹きつけられます。' },
+		
+      'TKLO': { name: 'キングマム', type: 'KL型', symbol: '☘️', badge: 'badge-clover',
+        description: '恋愛では頼れる存在として、相手を包み込み支えることを好むタイプです。強さと優しさを兼ね備え、恋人に安心感を与えることができるだけでなく、相手の気持ちに寄り添いながらも自分も時に甘えるバランス感覚を持ちます。安定感と包容力のある性格が、恋愛においても信頼を生むでしょう。' },
+		
+      'TKLS': { name: 'シークレットスパイ', type: 'KL型', symbol: '☘️', badge: 'badge-clover',
+        description: '恋愛では刺激的でミステリアスな魅力を放つタイプです。好奇心が旺盛で、恋人をドキドキさせる行動を好みます。一見慎重に見えますが、内面では情熱に溢れており、その情熱が関係をより深く魅力的にします。' },
+		
+      'CKLO': { name: 'マリンミューズ', type: 'KL型', symbol: '☘️', badge: 'badge-clover',
+        description: '控えめで静かな雰囲気を持ち、穏やかな恋愛を好むタイプです。相手の気持ちを観察しながら、慎重に距離を縮めます。内面には秘めた情熱があり、信頼関係が深まるとその愛情が自然に表現されるでしょう。観察力が高いため、相手の嘘を見抜くのが得意です。' },
+		
+      'CKLS': { name: 'ピクシーエルフ', type: 'KL型', symbol: '☘️', badge: 'badge-clover',
+        description: '可愛らしく、恋愛そのものに対する理想が明確にあるタイプです。相手のために献身的に行動する姿が、相手の恋心を育てます。自分自身を後回しにしがちなため、無償の愛を注ぎがちです。軽やかで愛らしい魅力が、日々の生活にささやかな幸せを生みます。' },
+		
+      'TKGO': { name: 'エリートバトラー', type: 'KG型', symbol: '♠️', badge: 'badge-spade',
+        description: '恋愛では相手を陰で支えることに幸福を感じるタイプです。一見控えめで礼儀正しく、安定感と安心感を提供されます。誠実で真面目な性格が、信頼関係を深める大きな魅力となります。' },
+		
+      'TKGS': { name: 'ラブボム', type: 'KG型', symbol: '♠️', badge: 'badge-spade',
+        description: 'ミステリアスで初めは不思議な印象です。関わっていくほどに魅力が増していき、恋人の特権と言われる一面を見せてくれます。恋愛においては、率直で分かりやすいアプローチを好みます。' },
+		
+      'CKGO': { name: 'ソフトガーディアン', type: 'KG型', symbol: '♠️', badge: 'badge-spade',
+        description: '穏やかで優しく、恋愛では相手を安心させることを大切にします。守りながらも強要せず、自然な距離感で関係を築くタイプです。柔らかく落ち着いた性格が、相手に癒しや安らぎを提供します。' },
+		
+      'CKGS': { name: 'シャイラム', type: 'KG型', symbol: '♠️', badge: 'badge-spade',
+        description: '恋愛においては慎重派なタイプ。その性格を面白いと感じてくれる人を好きになりがちです。相手の好意を感じるたびに自身の気持ちに気づき、愛を育てていきます。その純真さが、恋愛において愛される要素となります。' }
+};
+
+// 結果画面に反映
+function showResult(characterCode) {
+  const char = characters[characterCode];
+  
+  // メイン結果
+  document.getElementById('result-image').src = char.image;
+  document.getElementById('result-code').textContent = characterCode;
+  document.getElementById('result-name').textContent = char.name;
+  document.getElementById('type-badge').textContent = `${char.symbol} ${char.type}`;
+  document.getElementById('type-badge').className = `inline-block px-4 py-1 rounded-full text-white text-sm font-bold mb-3 ${char.badge}`;
+  document.getElementById('result-description').textContent = char.description;
+
+  // Good matches
+  char.goodMatches.forEach((match, i) => {
+    document.getElementById(`match${i+1}-code`).textContent = match.code;
+    document.getElementById(`match${i+1}-name`).textContent = match.name;
+    document.getElementById(`match${i+1}-image`).src = match.image;
+  });
+
+  // Bad match
+  document.getElementById('bad-match-code').textContent = char.badMatch.code;
+  document.getElementById('bad-match-name').textContent = char.badMatch.name;
+  document.getElementById('bad-match-image').src = char.badMatch.image;
+
+  // 画面切替
+  document.getElementById('question-screen').classList.remove('active');
+  document.getElementById('question-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('active');
+}
+
+// 例: 診断が終わったら呼び出す
+// showResult('TPLO');
+		 
+		 document.addEventListener('DOMContentLoaded', () => {
+  showResult('TPLO');
+});
+</script>
 </body>
 </html>
